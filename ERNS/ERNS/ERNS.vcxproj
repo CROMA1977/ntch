@@ -38,7 +38,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -179,6 +179,8 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CEditControlSMS.h" />
+    <ClInclude Include="CToolTipListCtrl.h" />
     <ClInclude Include="ERNS.h" />
     <ClInclude Include="ERNSDlg.h" />
     <ClInclude Include="Resource.h" />
@@ -186,6 +188,8 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CEditControlSMS.cpp" />
+    <ClCompile Include="CToolTipListCtrl.cpp" />
     <ClCompile Include="ERNS.cpp" />
     <ClCompile Include="ERNSDlg.cpp" />
     <ClCompile Include="stdafx.cpp">

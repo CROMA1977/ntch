@@ -40,8 +40,8 @@
 #include <vector>
 using namespace std;
 
-
-
+#include "CEditControlSMS.h"
+#include "CToolTipListCtrl.h"
 
 
 #ifdef _UNICODE
