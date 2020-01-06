@@ -162,13 +162,17 @@ CString GenerateReport(CString DateStart, CString DateEnd) {
 
 	CTime CurrentTime = CTime::GetCurrentTime();
 
+	FILE * fptrC, *fptrE;
 	// 根據日期時間參數產生對應的檔名
 	//ris20191111134610811031081109
 	//ris201911111346 1081103 1081109
 	//ris 西元年的執行時間 民國年的資料開始日期 民國年的資料結束日期
 	CString FileName;
 	FileName.Format(L"ris%4d%02d%02d%02d%02d%7s%7s.csv", CurrentTime.GetYear(), CurrentTime.GetMonth(), CurrentTime.GetDay(), CurrentTime.GetHour(), CurrentTime.GetMinute(), DateStart, DateEnd);
-	_wfopen_s(&fptr, FileName, L"w");
+	_wfopen_s(&fptrC, FileName, L"w");
+
+	FileName.Format(L"ris%4d%02d%02d%02d%02d%7s%7s-Error.csv", CurrentTime.GetYear(), CurrentTime.GetMonth(), CurrentTime.GetDay(), CurrentTime.GetHour(), CurrentTime.GetMinute(), DateStart, DateEnd);
+	_wfopen_s(&fptrE, FileName, L"w");
 
 	CDatabase database;
 	TRY{
@@ -176,7 +180,8 @@ CString GenerateReport(CString DateStart, CString DateEnd) {
 		database.OpenEx(sConnectStringDsnLess);
 		//-- 更新資料
 		CString sSqlString;
-		sSqlString.Format(Format);
+		//sSqlString.Format(Format);
+		sSqlString = Format;
 		database.ExecuteSQL(sSqlString);
 
 		CRecordset recset(&database);
@@ -185,6 +190,7 @@ CString GenerateReport(CString DateStart, CString DateEnd) {
 		// 對資料進行分析與轉換
 		CString Value[14];
 		CString RunState = L"正常執行";
+		bool InformationComplete = false;
 		while (!recset.IsEOF()) {
 			// 讀取對應的欄位
 			recset.GetFieldValue(L"醫事機構代碼", Value[0]);
@@ -201,11 +207,16 @@ CString GenerateReport(CString DateStart, CString DateEnd) {
 			recset.GetFieldValue(L"平均紅血球容積(MCV)", Value[11]);
 			recset.GetFieldValue(L"血清麩胺酸苯醋酸轉氨基脢(S-GOT/AST)", Value[12]);
 			recset.GetFieldValue(L"血清麩胺酸丙酮酸轉氨基脢(S-GPT/ALT)", Value[13]);
+			if (Value[1] == "A127081948") {
+				int a = 0;
+				a++;
+			}
 			// 對資料進行清洗與正規化
-			for (int i = 0; i < 14; i++) {
-
+			InformationComplete = true;
+			for (int i = 0; i < 14; i++) {				
 				if (Value[i] == L"") {
 					RunState = L"資料發生缺漏，請調整時間區間";
+					InformationComplete = false;
 					continue;
 				}
 				// 愛滋病毒檢查
@@ -295,7 +306,12 @@ CString GenerateReport(CString DateStart, CString DateEnd) {
 				}
 			}
 			// 輸出資料到 CSV 檔
-			WriteFile(fptr, Value);
+			if (InformationComplete == true) {
+				WriteFile(fptrC, Value);
+			} else {
+				WriteFile(fptrE, Value);
+			}
+
 			// 清空資料表
 			for (int i = 0; i < 14; i++) {
 				Value[i] = L"";
@@ -304,7 +320,8 @@ CString GenerateReport(CString DateStart, CString DateEnd) {
 		}
 		// 關閉資料庫連線
 		database.Close();		
-		fclose(fptr);
+		fclose(fptrC);
+		fclose(fptrE);
 		return RunState;
 	}CATCH(CDBException, e) {
 		database.Close();
