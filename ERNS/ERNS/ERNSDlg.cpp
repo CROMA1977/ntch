@@ -50,17 +50,18 @@ END_MESSAGE_MAP()
 CERNSDlg::CERNSDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_ERNS_DIALOG, pParent)
 {
-	m_ScheduledSenderNumber = 0;	
-	m_SenderCompletedNumber = 0;	
-	m_RepliesCompletedNumber = 0;	
-	m_RepliesState1Number = 0;		
-	m_RepliesState2Number = 0;		
-	m_RepliesState3Number = 0;		
-	m_RepliesState4Number = 0;		
-	m_RepliesState5Number = 0;		
-	m_RepliesState6Number = 0;		
+	// 初始化設定值
+	m_ScheduledSenderNumber		= 0;	
+	m_SenderCompletedNumber		= 0;	
+	m_RepliesCompletedNumber	= 0;	
+	m_RepliesState1Number		= 0;		
+	m_RepliesState2Number		= 0;		
+	m_RepliesState3Number		= 0;		
+	m_RepliesState4Number		= 0;		
+	m_RepliesState5Number		= 0;		
+	m_RepliesState6Number		= 0;		
 
-	// 產生範例檔
+	// 當範例檔不存在時產生範例檔
 	FILE *fptr = NULL;
 	fopen_s(&fptr, "SMS_SendList_Demo.csv", "rt");
 	if (fptr == NULL) {
@@ -143,19 +144,22 @@ BOOL CERNSDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 設定小圖示
 
 	// TODO: 在此加入額外的初始設定
+
+	// 設定簡訊編輯物件的資料連結
 	m_EditSmsMessage1.m_Length1 = &m_EditSmsMessage1.m_MessageLength;
 	m_EditSmsMessage1.m_Length2 = &m_EditSmsMessage2.m_MessageLength;
 	m_EditSmsMessage1.m_StaticInfo = &this->m_StaticInfo;	
-
+	// 設定簡訊編輯物件的資料連結
 	m_EditSmsMessage2.m_Length1 = &m_EditSmsMessage1.m_MessageLength;
 	m_EditSmsMessage2.m_Length2 = &m_EditSmsMessage2.m_MessageLength;
 	m_EditSmsMessage2.m_StaticInfo = &this->m_StaticInfo;
 	
 	CRect rect;
+	// 設定狀態列表的資料連結
 	m_ListCtrlRecallSituation.m_CERNSDlg = this;
 	m_ListCtrlRecallSituation.GetClientRect(&rect);
 	m_ListCtrlRecallSituation.SetExtendedStyle(m_ListCtrlRecallSituation.GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_AUTOARRANGE | LVS_EX_INFOTIP);
-	
+	// 初始化狀態列表的欄位
 	m_ListCtrlRecallSituation.InsertColumn(0, _T("群組"), LVCFMT_CENTER,118);
 	m_ListCtrlRecallSituation.InsertColumn(1, _T("預定召回"), LVCFMT_CENTER,75);
 	m_ListCtrlRecallSituation.InsertColumn(2, _T("已確認動態"), LVCFMT_CENTER,90);
@@ -166,7 +170,7 @@ BOOL CERNSDlg::OnInitDialog()
 	m_ListCtrlRecallSituation.InsertColumn(7, _T("60 分鐘內返院"), LVCFMT_CENTER, 110);
 	m_ListCtrlRecallSituation.InsertColumn(8, _T("無法返院"), LVCFMT_CENTER,80);
 	m_ListCtrlRecallSituation.InsertColumn(9, _T("尚未回覆"), LVCFMT_CENTER,80);
-
+	// 設定模板的 ComboBox 的選單
 	m_ComboTemplate.AddString("測試用模板(990)");
 	m_ComboTemplate.AddString("嚴重火災模板(999)");
 	m_ComboTemplate.AddString("嚴重地震模板(998)");
@@ -178,7 +182,7 @@ BOOL CERNSDlg::OnInitDialog()
 	m_ComboTemplate.AddString("院內水力模板(992)");
 	m_ComboTemplate.AddString("院內空調模板(991)");
 	m_ComboTemplate.SetCurSel(0);
-
+	// 設定各模板的內容
 	m_SMS_TemplateListA.push_back("新北市立聯合醫院%s進行 [緊急召回系統稽核]，請回覆簡訊進行稽核:");
 	m_SMS_TemplateListA.push_back("新北市立聯合醫院%s出現 [大量火災傷患]，須緊急召回人員，請回傳預定回院時間:");
 	m_SMS_TemplateListA.push_back("新北市立聯合醫院%s出現 [大量地震傷患]，須緊急召回人員，請回傳預定回院時間:");
@@ -189,7 +193,7 @@ BOOL CERNSDlg::OnInitDialog()
 	m_SMS_TemplateListA.push_back("新北市立聯合醫院%s發生 [電力失效事件]，須緊急召回人員，請回傳預定回院時間:");
 	m_SMS_TemplateListA.push_back("新北市立聯合醫院%s發生 [水力失效事件]，須緊急召回人員，請回傳預定回院時間:");
 	m_SMS_TemplateListA.push_back("新北市立聯合醫院%s發生 [空調失效事件]，須緊急召回人員，請回傳預定回院時間:");
-
+	
 	m_SMS_TemplateListB.push_back("在院(%s0),10分到院(%s1),20分到院(%s2),30分到院(%s3),60分到院(%s6),無法60分回院(%s9)");
 	m_SMS_TemplateListB.push_back("在院(%s0),10分到院(%s1),20分到院(%s2),30分到院(%s3),60分到院(%s6),無法60分回院(%s9)");
 	m_SMS_TemplateListB.push_back("在院(%s0),10分到院(%s1),20分到院(%s2),30分到院(%s3),60分到院(%s6),無法60分回院(%s9)");
@@ -200,7 +204,7 @@ BOOL CERNSDlg::OnInitDialog()
 	m_SMS_TemplateListB.push_back("在院(%s0),10分到院(%s1),20分到院(%s2),30分到院(%s3),60分到院(%s6),無法60分回院(%s9)");
 	m_SMS_TemplateListB.push_back("在院(%s0),10分到院(%s1),20分到院(%s2),30分到院(%s3),60分到院(%s6),無法60分回院(%s9)");
 	m_SMS_TemplateListB.push_back("在院(%s0),10分到院(%s1),20分到院(%s2),30分到院(%s3),60分到院(%s6),無法60分回院(%s9)");
-
+	// 設定各模板使用的代碼
 	m_SMS_MessageCodeList.push_back("990");
 	m_SMS_MessageCodeList.push_back("999");
 	m_SMS_MessageCodeList.push_back("998");
@@ -211,23 +215,26 @@ BOOL CERNSDlg::OnInitDialog()
 	m_SMS_MessageCodeList.push_back("993");
 	m_SMS_MessageCodeList.push_back("992");
 	m_SMS_MessageCodeList.push_back("991");
-
+	// 設定院區的 ComboBox
 	m_ComboDistrict.AddString("全院區");
 	m_ComboDistrict.AddString("三重院區");
 	m_ComboDistrict.AddString("板橋院區");
 	m_ComboDistrict.SetCurSel(0);
-
+	// 設定院區的模板參數
 	m_SMS_DistrictCodeList.push_back(" 兩院區 ");
 	m_SMS_DistrictCodeList.push_back(" 三重院區 ");
 	m_SMS_DistrictCodeList.push_back(" 板橋院區 ");
+	// 以現有的選擇進行簡訊內容的設定
 	UseTemplateSetMessage();
-
+	// 讀取簡訊的發送資料
 	ReadSendList("SMS_SendList_DEF.csv", "SMS_SendList_DEF.csv");
+	// 更新目前的狀態
 	Update();
 
+	// 設定 List 元件的提示
 	EnableToolTips(TRUE);
 	m_ListCtrlRecallSituation.EnableToolTips(TRUE);
-
+	// 設定自動更新的觸發時間
 	SetTimer(0, 60 * 3000 * 1, NULL);
 	return TRUE;  // 傳回 TRUE，除非您對控制項設定焦點
 }
@@ -282,20 +289,26 @@ HCURSOR CERNSDlg::OnQueryDragIcon()
 }
 
 void CERNSDlg::ReadSendList(CString PathName, CString FileName) {
+	// 開啟簡訊發送人員的資料檔
 	char * ptr = PathName.GetBuffer();
 	FILE * fptr = NULL;
 	fopen_s(&fptr, ptr, "rt");
-
+	// 當檔案開啟失敗時提示訊息
 	if (fptr == NULL) {
 		CString ErrorMessage;
 		ErrorMessage.Format("開啟檔案 \"%s\" 失敗", FileName);
 		AfxMessageBox(ErrorMessage);
 		return;
 	}
+
+	// 清除目前的資料
 	m_SMS_SendList.clear();
 	m_SMS_GroupList.clear();
 	m_SMS_DepartmentList.clear();
+	// 設定頁面上的檔案名稱
 	m_Filename.SetWindowTextA(FileName);
+
+	// 讀取資料內容
 	int i,index;
 	char Buffer[128];
 	CString String[5];
@@ -337,7 +350,7 @@ void CERNSDlg::ReadSendList(CString PathName, CString FileName) {
 		Info.m_Group		= Group;
 		Info.m_JobTitle		= JobTitle;
 		Info.m_Department	= Department;
-
+		// 檢查資料的正確性
 		if (Phone != "") {
 			if (Phone.Left(1) != "0") {
 				CString ErrorMessage;
@@ -379,8 +392,8 @@ void CERNSDlg::ReadSendList(CString PathName, CString FileName) {
 		}
 	}
 
+	// 清除列表的內容後重新設定
 	m_ListCtrlRecallSituation.DeleteAllItems();
-
 	for (unsigned int i = 0; i < m_SMS_GroupList.size(); i++) {
 		m_ListCtrlRecallSituation.InsertItem(i, m_SMS_GroupList[i]);
 		m_ListCtrlRecallSituation.SetItemText(i, 1, _T("0"));
@@ -439,9 +452,9 @@ void CERNSDlg::Update(void)
 	CDatabase database;
 	TRY{
 		// 連線資料庫 DSN or DSN LESS
-		database.OpenEx(sConnectStringDsnLess);
+		database.OpenEx(sConnectStringDsnLess);		
 		
-		// 查詢 24 小時內 ERNS 系統發送的電話號碼
+		// 查詢 2 小時內 ERNS 系統發送的電話號碼
 		sSqlString.Format("select count(a.Tophone) as ScheduledSenderNumber from (select * from chtsms.fromuseridtosend where FromUserID = 'ERNS%s' AND SendTime >= (NOW() - interval 2 hour) group by ToPhone) a; ", MessageCode);
 		database.ExecuteSQL(sSqlString);
 		CRecordset recset1(&database);
@@ -450,7 +463,7 @@ void CERNSDlg::Update(void)
 		recset1.GetFieldValue("ScheduledSenderNumber", ScheduledSenderNumber);
 		m_ScheduledSenderNumber = _ttoi(ScheduledSenderNumber);
 
-		// 查詢 24 小時內 ERNS 系統完成發送的電話號碼
+		// 查詢 2 小時內 ERNS 系統完成發送的電話號碼
 		sSqlString.Format("select count(a.Tophone) as SenderCompletedNumber from (select * from chtsms.fromuseridtosend where FromUserID = 'ERNS%s' AND SendTime >= (NOW() - interval 2 hour) AND isSend = '1' group by ToPhone) a;", MessageCode);
 		database.ExecuteSQL(sSqlString);
 		CRecordset recset2(&database);
@@ -459,7 +472,7 @@ void CERNSDlg::Update(void)
 		recset2.GetFieldValue("SenderCompletedNumber", SenderCompletedNumber);
 		m_SenderCompletedNumber = _ttoi(SenderCompletedNumber);
 
-		// 查詢 24 小時內 ERNS 系統完成發送的電話號碼已回復的數量
+		// 查詢 2 小時內 ERNS 系統完成發送的電話號碼已回覆的數量
 		sSqlString.Format("select count(e.SendID) as RepliesCompletedNumber from(select d.ID as SendID, d.FromUserID as FromUserID, d.ToPhone as ToPhone, d.SendTime as SendTime, d.isSend as isSend, c.MessageBody as RecvMessageBody, c.RecvTime as RecvTime from(select * from chtsms.fromuseridtosend where FromUserID = 'ERNS%s' AND SendTime >= (NOW() - interval 2 hour) group by ToPhone) as d left join(select b.* from(select h24.FromPhone, max(h24.recvTime) as recvTime from(select * from chtsms.receivemessage	where recvTime >= (NOW() - interval 2 hour) AND MessageBody like '%s%%') h24	group by h24.FromPhone) as a left join chtsms.receivemessage as b on a.recvTime = b.recvTime AND a.FromPhone = b.FromPhone) as c on d.ToPhone = c.FromPhone) as e where e.RecvTime is not null;", MessageCode, MessageCode);
 		database.ExecuteSQL(sSqlString);
 		CRecordset recset3(&database);
@@ -468,7 +481,7 @@ void CERNSDlg::Update(void)
 		recset3.GetFieldValue("RepliesCompletedNumber", RepliesCompletedNumber);
 		m_RepliesCompletedNumber = _ttoi(RepliesCompletedNumber);
 
-		// 查詢 24 小時內 ERNS 系統完成發送的電話號碼回復為 0 的數量		
+		// 查詢 2 小時內 ERNS 系統完成發送的電話號碼回覆為 0 的數量		
 		sSqlString.Format("select count(e.SendID) as RepliesState1Number from(select d.ID as SendID, d.FromUserID as FromUserID, d.ToPhone as ToPhone, d.SendTime as SendTime, d.isSend as isSend, c.MessageBody as RecvMessageBody, c.RecvTime as RecvTime from(select * from chtsms.fromuseridtosend where FromUserID = 'ERNS%s' AND SendTime >= (NOW() - interval 2 hour) group by ToPhone) as d left join(select b.* from(select h24.FromPhone, max(h24.recvTime) as recvTime from(select * from chtsms.receivemessage	where recvTime >= (NOW() - interval 2 hour) AND MessageBody like '%s%%') h24	group by h24.FromPhone) as a left join chtsms.receivemessage as b on a.recvTime = b.recvTime AND a.FromPhone = b.FromPhone) as c on d.ToPhone = c.FromPhone) as e where e.RecvTime is not null AND e.RecvMessageBody = '%s0';", MessageCode, MessageCode, MessageCode);
 		database.ExecuteSQL(sSqlString);
 		CRecordset recset4(&database);
@@ -477,7 +490,7 @@ void CERNSDlg::Update(void)
 		recset4.GetFieldValue("RepliesState1Number", RepliesState1Number);
 		m_RepliesState1Number = _ttoi(RepliesState1Number);
 
-		// 查詢 24 小時內 ERNS 系統完成發送的電話號碼回復為 1 的數量
+		// 查詢 2 小時內 ERNS 系統完成發送的電話號碼回覆為 1 的數量
 		sSqlString.Format("select count(e.SendID) as RepliesState2Number from(select d.ID as SendID, d.FromUserID as FromUserID, d.ToPhone as ToPhone, d.SendTime as SendTime, d.isSend as isSend, c.MessageBody as RecvMessageBody, c.RecvTime as RecvTime from(select * from chtsms.fromuseridtosend where FromUserID = 'ERNS%s' AND SendTime >= (NOW() - interval 2 hour) group by ToPhone) as d left join(select b.* from(select h24.FromPhone, max(h24.recvTime) as recvTime from(select * from chtsms.receivemessage	where recvTime >= (NOW() - interval 2 hour) AND MessageBody like '%s%%') h24	group by h24.FromPhone) as a left join chtsms.receivemessage as b on a.recvTime = b.recvTime AND a.FromPhone = b.FromPhone) as c on d.ToPhone = c.FromPhone) as e where e.RecvTime is not null AND e.RecvMessageBody = '%s1';", MessageCode, MessageCode, MessageCode);
 		database.ExecuteSQL(sSqlString);
 		CRecordset recset5(&database);
@@ -486,7 +499,7 @@ void CERNSDlg::Update(void)
 		recset5.GetFieldValue("RepliesState2Number", RepliesState2Number);
 		m_RepliesState2Number = _ttoi(RepliesState2Number);
 
-		// 查詢 24 小時內 ERNS 系統完成發送的電話號碼回復為 2 的數量
+		// 查詢 2 小時內 ERNS 系統完成發送的電話號碼回覆為 2 的數量
 		sSqlString.Format("select count(e.SendID) as RepliesState3Number from(select d.ID as SendID, d.FromUserID as FromUserID, d.ToPhone as ToPhone, d.SendTime as SendTime, d.isSend as isSend, c.MessageBody as RecvMessageBody, c.RecvTime as RecvTime from(select * from chtsms.fromuseridtosend where FromUserID = 'ERNS%s' AND SendTime >= (NOW() - interval 2 hour) group by ToPhone) as d left join(select b.* from(select h24.FromPhone, max(h24.recvTime) as recvTime from(select * from chtsms.receivemessage	where recvTime >= (NOW() - interval 2 hour) AND MessageBody like '%s%%') h24	group by h24.FromPhone) as a left join chtsms.receivemessage as b on a.recvTime = b.recvTime AND a.FromPhone = b.FromPhone) as c on d.ToPhone = c.FromPhone) as e where e.RecvTime is not null AND e.RecvMessageBody = '%s2';", MessageCode, MessageCode, MessageCode);
 		database.ExecuteSQL(sSqlString);
 		CRecordset recset6(&database);
@@ -495,7 +508,7 @@ void CERNSDlg::Update(void)
 		recset6.GetFieldValue("RepliesState3Number", RepliesState3Number);
 		m_RepliesState3Number = _ttoi(RepliesState3Number);
 
-		// 查詢 24 小時內 ERNS 系統完成發送的電話號碼回復為 3 的數量
+		// 查詢 2 小時內 ERNS 系統完成發送的電話號碼回覆為 3 的數量
 		sSqlString.Format("select count(e.SendID) as RepliesState4Number from(select d.ID as SendID, d.FromUserID as FromUserID, d.ToPhone as ToPhone, d.SendTime as SendTime, d.isSend as isSend, c.MessageBody as RecvMessageBody, c.RecvTime as RecvTime from(select * from chtsms.fromuseridtosend where FromUserID = 'ERNS%s' AND SendTime >= (NOW() - interval 2 hour) group by ToPhone) as d left join(select b.* from(select h24.FromPhone, max(h24.recvTime) as recvTime from(select * from chtsms.receivemessage	where recvTime >= (NOW() - interval 2 hour) AND MessageBody like '%s%%') h24	group by h24.FromPhone) as a left join chtsms.receivemessage as b on a.recvTime = b.recvTime AND a.FromPhone = b.FromPhone) as c on d.ToPhone = c.FromPhone) as e where e.RecvTime is not null AND e.RecvMessageBody = '%s3';", MessageCode, MessageCode, MessageCode);
 		database.ExecuteSQL(sSqlString);
 		CRecordset recset7(&database);
@@ -504,7 +517,7 @@ void CERNSDlg::Update(void)
 		recset7.GetFieldValue("RepliesState4Number", RepliesState4Number);
 		m_RepliesState4Number = _ttoi(RepliesState4Number);
 
-		// 查詢 24 小時內 ERNS 系統完成發送的電話號碼回復為 6 的數量		
+		// 查詢 2 小時內 ERNS 系統完成發送的電話號碼回覆為 6 的數量		
 		sSqlString.Format("select count(e.SendID) as RepliesState5Number from(select d.ID as SendID, d.FromUserID as FromUserID, d.ToPhone as ToPhone, d.SendTime as SendTime, d.isSend as isSend, c.MessageBody as RecvMessageBody, c.RecvTime as RecvTime from(select * from chtsms.fromuseridtosend where FromUserID = 'ERNS%s' AND SendTime >= (NOW() - interval 2 hour) group by ToPhone) as d left join(select b.* from(select h24.FromPhone, max(h24.recvTime) as recvTime from(select * from chtsms.receivemessage	where recvTime >= (NOW() - interval 2 hour) AND MessageBody like '%s%%') h24	group by h24.FromPhone) as a left join chtsms.receivemessage as b on a.recvTime = b.recvTime AND a.FromPhone = b.FromPhone) as c on d.ToPhone = c.FromPhone) as e where e.RecvTime is not null AND e.RecvMessageBody = '%s6';", MessageCode, MessageCode, MessageCode);
 		database.ExecuteSQL(sSqlString);
 		CRecordset recset8(&database);
@@ -513,7 +526,7 @@ void CERNSDlg::Update(void)
 		recset8.GetFieldValue("RepliesState5Number", RepliesState5Number);
 		m_RepliesState5Number = _ttoi(RepliesState5Number);
 
-		// 查詢 24 小時內 ERNS 系統完成發送的電話號碼回復為 9 的數量
+		// 查詢 2 小時內 ERNS 系統完成發送的電話號碼回覆為 9 的數量
 		sSqlString.Format("select count(e.SendID) as RepliesState6Number from(select d.ID as SendID, d.FromUserID as FromUserID, d.ToPhone as ToPhone, d.SendTime as SendTime, d.isSend as isSend, c.MessageBody as RecvMessageBody, c.RecvTime as RecvTime from(select * from chtsms.fromuseridtosend where FromUserID = 'ERNS%s' AND SendTime >= (NOW() - interval 2 hour) group by ToPhone) as d left join(select b.* from(select h24.FromPhone, max(h24.recvTime) as recvTime from(select * from chtsms.receivemessage	where recvTime >= (NOW() - interval 2 hour) AND MessageBody like '%s%%') h24	group by h24.FromPhone) as a left join chtsms.receivemessage as b on a.recvTime = b.recvTime AND a.FromPhone = b.FromPhone) as c on d.ToPhone = c.FromPhone) as e where e.RecvTime is not null AND e.RecvMessageBody = '%s9';", MessageCode, MessageCode, MessageCode);
 		database.ExecuteSQL(sSqlString);
 		CRecordset recset9(&database);
@@ -569,7 +582,7 @@ void CERNSDlg::Update(void)
 	State.Format("無法返院(無法返院人數/已發送人數): %d / %d", m_RepliesState6Number, m_SenderCompletedNumber);
 	m_StaticState8.SetWindowTextA(State);
 
-	// 計算群組的狀態並更新 List
+	// 計算群組的狀態並更新 List 的提示
 	int Number[9] = { 0 };
 	CString TipText[9],Text;
 	for (unsigned int i = 0; i < m_SMS_GroupList.size(); i++) {
@@ -800,9 +813,8 @@ void CERNSDlg::Update(void)
 			TipText[j] = "";
 		}
 	}
-
+	// 更新 最後更新時間
 	CTime CurrentTime = CTime::GetCurrentTime();
-
 	CString UpdateTime;
 	UpdateTime.Format("召回情況[更新時間:%02d/%02d %02d:%02d](每3分鐘自動更新)", CurrentTime.GetMonth(), CurrentTime.GetDay(), CurrentTime.GetHour(), CurrentTime.GetMinute());	
 	m_UpdateTime.SetWindowTextA(UpdateTime);
@@ -892,7 +904,7 @@ void CERNSDlg::OnBnClickedButtonSelectSendMessageListFile()
 		//開啟檔案成功
 		CString szFileTitle = Dialog.GetFileName(); //取得開啟檔案的全名(包含路徑)
 		CString szFileName = Dialog.GetPathName();	//取得開啟檔案的全名(包含路徑)
-		ReadSendList(szFileName, szFileTitle);
+		ReadSendList(szFileName, szFileTitle);		//讀取指定檔案並更新頁面
 		Update();
 	}
 }
@@ -902,6 +914,7 @@ void CERNSDlg::OnBnClickedButtonGetState()
 	OutputState(true);
 }
 void CERNSDlg::OutputList(int Item, int iSubItem) {
+	// 根據所點選的位置輸出指定的報告檔並以記事本開啟檔案
 	FILE *fptr = NULL;
 	fopen_s(&fptr, "SMS_SendList_List.txt", "wt");
 	if ((unsigned int)Item < m_SMS_GroupList.size()) {
@@ -921,7 +934,9 @@ void CERNSDlg::OutputList(int Item, int iSubItem) {
 }
 
 void CERNSDlg::OutputState(bool openFile)
-{
+{	
+	// 輸出狀態報告根據參數決定是否自動開啟
+
 	// 取出訊息碼
 	CString MessageCode = m_SMS_MessageCodeList[m_NowMessageID];
 	// 進行資料庫資料更新作業
@@ -942,7 +957,7 @@ void CERNSDlg::OutputState(bool openFile)
 
 	CString ToPhone, RecvMessageBody;
 	CDatabase database;
-
+	// 讀取 兩小時內的回報資料
 	TRY{
 		// 連線資料庫 DSN or DSN LESS
 		database.OpenEx(sConnectStringDsnLess);
@@ -974,6 +989,7 @@ void CERNSDlg::OutputState(bool openFile)
 	}
 	END_CATCH;
 
+	// 產生報告檔
 	CTime CurrentTime = CTime::GetCurrentTime();
 
 	FILE *fptr = NULL;
@@ -995,7 +1011,7 @@ void CERNSDlg::OutputState(bool openFile)
 		OutputDepartmentList(fptr, m_SMS_DepartmentList[i]);
 	}
 	fclose(fptr);
-	// TODO: 在此加入控制項告知處理常式程式碼
+	// 根據設定決定是否自動開啟
 	if (openFile == true) {
 		HINSTANCE hRslt = ShellExecute(NULL, _T("open"), _T("notepad.EXE"), _T(FileName), NULL, SW_SHOWNORMAL);
 		assert(hRslt > (HINSTANCE)HINSTANCE_ERROR);
@@ -1047,7 +1063,6 @@ void  CERNSDlg::OutputGroupList(FILE *fptr, CString Group) {
 				Number[7]++;
 				continue;
 			}
-
 		}
 	}
 	// 如果沒有該項目則返回
@@ -1447,7 +1462,7 @@ void CERNSDlg::UseTemplateSetMessage(void) {
 	m_SMS_DistrictCodeList.push_back(" 三重院區 ");
 	m_SMS_DistrictCodeList.push_back(" 板橋院區 ");
 	*/
-
+	// 根據選項套用模板並設定到編輯區
 	int UseTemplateID = m_ComboTemplate.GetCurSel();
 	int UseDistrictID = m_ComboDistrict.GetCurSel();
 	m_NowMessageID = UseTemplateID;
@@ -1462,5 +1477,6 @@ void CERNSDlg::UseTemplateSetMessage(void) {
 void CERNSDlg::OnBnClickedButtonUseTemplate()
 {
 	// TODO: 在此加入控制項告知處理常式程式碼
+	// 根據選項套用模板並設定到編輯區
 	UseTemplateSetMessage();
 }

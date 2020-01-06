@@ -100,6 +100,6 @@ private:
 			void						OutputState(bool openFile);
 			void						OutputGroupList(FILE *fptr, CString Group);				///< 輸出群組的狀態										
 			void						OutputDepartmentList(FILE *fptr, CString Department);	///< 輸出部門的狀態
-			void						UseTemplateSetMessage(void);
+			void						UseTemplateSetMessage(void);							///< 透過模板設定訊息
 public:
 };
